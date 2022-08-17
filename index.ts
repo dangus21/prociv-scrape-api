@@ -1,20 +1,14 @@
 import { screenshot } from './scrape';
 
-// Require the framework and instantiate it
-const fastify = require('fastify')({ logger: true });
+import express from 'express';
+const app = express();
+const port = 3000;
 
-// Declare a route
-fastify.get('/', async () => {
-    return screenshot();
+app.get('/', async (req, res) => {
+    const image = await screenshot();
+    res.send(image);
 });
 
-// Run the server!
-async function start() {
-    try {
-        await fastify.listen({ port: 3000 });
-    } catch (err) {
-        fastify.log.error(err);
-        process.exit(1);
-    }
-}
-start();
+app.listen(port, () => {
+    console.log('listening on port', port);
+});
