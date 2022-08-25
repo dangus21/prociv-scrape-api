@@ -1,9 +1,9 @@
-import chrome from 'chrome-aws-lambda';
-import puppeteer from 'puppeteer-core';
+const chrome = require('chrome-aws-lambda');
+const puppeteer = require('puppeteer-core');
 
-export async function screenshot() {
-    let page: puppeteer.Page;
-    let browser: puppeteer.Browser;
+async function screenshot() {
+    let page;
+    let browser;
     try {
         const options = process.env.AWS_REGION
             ? {
@@ -13,7 +13,7 @@ export async function screenshot() {
                   ignoreDefaultArgs: ['--disable-extensions'],
               }
             : {
-                  headless: false,
+                  headless: true,
                   args: [],
                   ignoreDefaultArgs: ['--disable-extensions'],
                   executablePath:
@@ -34,11 +34,8 @@ export async function screenshot() {
         try {
             await page.waitForFunction(
                 () =>
-                    (
-                        document.querySelector(
-                            '#listOcorrenciasDetails tbody'
-                        ) as HTMLElement
-                    ).childElementCount || 0 > 0
+                    document.querySelector('#listOcorrenciasDetails tbody')
+                        .childElementCount || 0 > 0
             );
         } catch (error) {
             const screenshot = await page.screenshot({ encoding: 'base64' });
@@ -55,7 +52,7 @@ export async function screenshot() {
             }
         });
 
-        const isElementVisible = async (page, cssSelector: string) => {
+        const isElementVisible = async (page, cssSelector) => {
             let visible = true;
             await page
                 .waitForSelector(cssSelector, { visible: true, timeout: 2000 })
@@ -112,3 +109,5 @@ export async function screenshot() {
         return `data:image/jpeg;base64,${screenshot}`;
     }
 }
+
+module.exports = screenshot;

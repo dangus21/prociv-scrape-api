@@ -12,14 +12,12 @@ module.exports = {
         'prettier',
         'plugin:@next/next/recommended',
     ],
-    parser: '@typescript-eslint/parser',
     parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
     },
-    plugins: ['@typescript-eslint', 'prettier', 'import'],
+    plugins: ['prettier', 'import'],
     rules: {
-        '@typescript-eslint/no-var-requires': 0,
         // indent: ['error', 'tab'],
         'linebreak-style': ['error', 'unix'],
         quotes: ['error', 'single'],
