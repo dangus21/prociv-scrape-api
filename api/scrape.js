@@ -5,7 +5,7 @@ async function screenshot() {
     let page;
     let browser;
     try {
-        const options = process.env.AWS_REGION
+        const options = process.env.PROD
             ? {
                   args: chrome.args,
                   executablePath: await chrome.executablePath,
@@ -13,7 +13,6 @@ async function screenshot() {
                   ignoreDefaultArgs: ['--disable-extensions'],
               }
             : {
-                  headless: true,
                   args: [],
                   ignoreDefaultArgs: ['--disable-extensions'],
                   executablePath:
@@ -40,7 +39,7 @@ async function screenshot() {
         } catch (error) {
             const screenshot = await page.screenshot({ encoding: 'base64' });
             await browser.close();
-            return `data:image/jpeg;base64,${screenshot}`;
+            return { blob: `data:image/jpeg;base64,${screenshot}` };
         }
 
         await page.evaluate(() => {
@@ -66,11 +65,10 @@ async function screenshot() {
             page,
             '#listOcorrenciasDetails > table > tfoot > tr > th > span'
         );
-        let loadMoreTries = 0;
-        const loadMoreTriesMax = 8;
+        let tries = 5;
         try {
-            while (loadMoreVisible && loadMoreTries < loadMoreTriesMax) {
-                loadMoreTries += 1;
+            while (loadMoreVisible && tries !== 0) {
+                tries--;
                 loadMoreVisible = await isElementVisible(
                     page,
                     '#listOcorrenciasDetails > table > tfoot > tr > th > span'
@@ -97,16 +95,16 @@ async function screenshot() {
         } catch (error) {
             const screenshot = await page.screenshot({ encoding: 'base64' });
             await browser.close();
-            return `data:image/jpeg;base64,${screenshot}`;
+            return { blob: `data:image/jpeg;base64,${screenshot}` };
         }
 
         const screenshot = await page.screenshot({ encoding: 'base64' });
         await browser.close();
-        return `data:image/jpeg;base64,${screenshot}`;
+        return { blob: `data:image/jpeg;base64,${screenshot}` };
     } catch {
         const screenshot = await page.screenshot({ encoding: 'base64' });
         await browser.close();
-        return `data:image/jpeg;base64,${screenshot}`;
+        return { blob: `data:image/jpeg;base64,${screenshot}` };
     }
 }
 
